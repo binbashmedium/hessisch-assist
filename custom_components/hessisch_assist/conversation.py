@@ -18,8 +18,16 @@ class HessischConversationProvider(AbstractConversationProvider):
     def __init__(self, hass: HomeAssistant) -> None:
         """Initialize the provider."""
         self.hass = hass
-        self.id = "hessisch_assist"
-        self.name = "Hessisch Assist"
+
+    @property
+    def id(self) -> str:  # pragma: no cover - interface property
+        """Return stable id for the provider."""
+        return "hessisch_assist"
+
+    @property
+    def name(self) -> str:  # pragma: no cover - interface property
+        """Return display name for the provider."""
+        return "Hessisch Assist"
 
     @property
     def supported_languages(self) -> Iterable[str]:  # pragma: no cover - interface property
@@ -37,7 +45,7 @@ class HessischConversationProvider(AbstractConversationProvider):
             return_response=True,
         )
 
-        original = result.get("response", "") if isinstance(result, dict) else ""
+        original = result.get("response", "")
         dialect = convert_to_hessisch(str(original))
 
         return ConversationResult(text=dialect)
