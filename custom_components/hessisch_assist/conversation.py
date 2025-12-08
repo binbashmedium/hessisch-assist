@@ -1,8 +1,8 @@
-"""Conversation provider that converts responses to Hessisch dialect."""
+"""Hessisch Assist custom conversation agent."""
 from __future__ import annotations
 
-from homeassistant.components.conversation import (
-    AbstractConversationProvider,
+from homeassistant.components.conversation.models import (
+    AbstractConversationAgent,
     ConversationInput,
     ConversationResult,
 )
@@ -11,40 +11,39 @@ from homeassistant.core import HomeAssistant
 from .dialect import convert_to_hessisch
 
 
-class HessischConversationProvider(AbstractConversationProvider):
-    """Hessisch dialect conversation provider."""
+class HessischAgent(AbstractConversationAgent):
+    """A conversation agent that converts HA replies to Hessisch dialect."""
 
-    @property
-    def provider_type(self) -> str:
-        return "local"
-
-    def __init__(self, hass: HomeAssistant) -> None:
+    def __init__(self, hass: HomeAssistant):
         self.hass = hass
         self.id = "hessisch_assist"
         self.name = "Hessisch Assist"
 
     @property
-    def supported_languages(self) -> list[str]:
+    def supported_languages(self):
         return ["de"]
 
+    async def async_prepare(self, language: str) -> None:
+        """Prepare the agent for a specific language."""
+        return
+
     async def async_process(
-        self, text: str, context: ConversationInput | None = None
+        self, user_input: ConversationInput, conversation_id: str | None
     ) -> ConversationResult:
+        """Process user input through the default agent, then hessisch-ify it."""
 
-        result = await self.hass.services.async_call(
-            "conversation",
-            "process",
-            {"text": text},
-            blocking=True,
-            return_response=True,
+        # Call the default agent
+        default = self.hass.components.conversation.async_get_agent(
+            self.hass, None
         )
+        if default is None:
+            return ConversationResult(text="Fehler: Kein Standard-Agent.")
 
-        try:
-            original = result["response"]["speech"]["plain"]["speech"]
-        except Exception:
-            original = ""
+        result = await default.async_process(user_input, conversation_id)
 
-        dialect = convert_to_hessisch(original)
+        # Extract plain text
+        text = result.response_text or ""
 
-        return ConversationResult(text=dialect)
+        # Convert to Hessisch
+        return ConversationResult(text=convert_to_hessisch(text))
         
