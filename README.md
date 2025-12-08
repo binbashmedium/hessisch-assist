@@ -12,9 +12,7 @@ Hessisch Assist ist ein Home Assistant Custom Component, das einen eigenen Conve
 1. Öffne **Einstellungen → Sprachassistent → Pipelines**.
 2. Bearbeite eine bestehende Pipeline oder lege eine neue an.
 3. Wähle unter **Conversation Provider** den Eintrag **Hessisch Assist** aus.
-4. Speichere die Pipeline. Alle Antworten des Assistants werden nun automatisch ins Hessische übertragen.
-
-> Hinweis: Es ist **keine** Konfiguration in `configuration.yaml` nötig. Die Integration arbeitet ausschließlich über die Conversation-Provider-Schnittstelle und lädt keine weiteren Plattformmodule.
+4. Speichere die Pipeline. Alle Antworten des Assistants werden nun in hessischen Dialekt übertragen.
 
 ## Beispiele hessischer Antworten
 - „Das Licht is ferdisch an, gell, mei guddzje.“
