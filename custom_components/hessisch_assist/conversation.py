@@ -12,7 +12,12 @@ from .dialect import convert_to_hessisch
 
 
 class HessischConversationProvider(AbstractConversationProvider):
-    """Conversation provider that wraps the default provider and adds dialect."""
+    """Hessisch dialect conversation provider."""
+
+    @property
+    def provider_type(self) -> str:
+        """Declare provider type."""
+        return "local"
 
     def __init__(self, hass: HomeAssistant) -> None:
         self.hass = hass
@@ -21,13 +26,11 @@ class HessischConversationProvider(AbstractConversationProvider):
 
     @property
     def supported_languages(self) -> list[str]:
-        """Supported languages."""
         return ["de"]
 
     async def async_process(
         self, text: str, context: ConversationInput | None = None
     ) -> ConversationResult:
-        """Process a request via default conversation service and return Hessisch reply."""
 
         result = await self.hass.services.async_call(
             "conversation",
@@ -37,15 +40,12 @@ class HessischConversationProvider(AbstractConversationProvider):
             return_response=True,
         )
 
-        # Extract proper response text for HA 2024.10+
         try:
-            original = (
-                result["response"]["speech"]["plain"]["speech"]
-            )
+            original = result["response"]["speech"]["plain"]["speech"]
         except Exception:
             original = ""
 
-        dialect = convert_to_hessisch(original)
-
-        return ConversationResult(text=dialect)
+        return ConversationResult(
+            text=convert_to_hessisch(original)
+        )
         
