@@ -1,4 +1,4 @@
-"""Conversation provider that converts answers to Hessisch dialect."""
+"""Conversation provider that converts responses to Hessisch dialect."""
 from __future__ import annotations
 
 from homeassistant.components.conversation import (
@@ -16,7 +16,6 @@ class HessischConversationProvider(AbstractConversationProvider):
 
     @property
     def provider_type(self) -> str:
-        """Declare provider type."""
         return "local"
 
     def __init__(self, hass: HomeAssistant) -> None:
@@ -45,7 +44,7 @@ class HessischConversationProvider(AbstractConversationProvider):
         except Exception:
             original = ""
 
-        return ConversationResult(
-            text=convert_to_hessisch(original)
-        )
+        dialect = convert_to_hessisch(original)
+
+        return ConversationResult(text=dialect)
         
