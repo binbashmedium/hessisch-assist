@@ -1,13 +1,12 @@
 """Conversation provider that converts answers to Hessisch dialect."""
 from __future__ import annotations
 
-from typing import Iterable
-
 from homeassistant.components.conversation import (
     AbstractConversationProvider,
+    ConversationInput,
     ConversationResult,
 )
-from homeassistant.core import Context, HomeAssistant
+from homeassistant.core import HomeAssistant
 
 from .dialect import convert_to_hessisch
 
@@ -16,27 +15,14 @@ class HessischConversationProvider(AbstractConversationProvider):
     """Conversation provider that wraps the default provider and adds dialect."""
 
     def __init__(self, hass: HomeAssistant) -> None:
-        """Initialize the provider."""
         self.hass = hass
+        self.id = "hessisch_assist"
+        self.name = "Hessisch Assist"
 
-    @property
-    def id(self) -> str:  # pragma: no cover - interface property
-        """Return stable id for the provider."""
-        return "hessisch_assist"
-
-    @property
-    def name(self) -> str:  # pragma: no cover - interface property
-        """Return display name for the provider."""
-        return "Hessisch Assist"
-
-    @property
-    def supported_languages(self) -> Iterable[str]:  # pragma: no cover - interface property
-        """Return supported languages."""
-        return ["de", "de-DE"]
-
-    async def async_process(self, text: str, context: Context | None) -> ConversationResult:
-        """Process a conversation request and return a dialect response."""
-
+    async def async_process(
+        self, text: str, context: ConversationInput | None
+    ) -> ConversationResult:
+        """Process a request via default conversation service and return Hessisch reply."""
         result = await self.hass.services.async_call(
             "conversation",
             "process",
@@ -44,8 +30,6 @@ class HessischConversationProvider(AbstractConversationProvider):
             blocking=True,
             return_response=True,
         )
-
-        original = result.get("response", "")
-        dialect = convert_to_hessisch(str(original))
-
+        original = result.get("response", "") if isinstance(result, dict) else ""
+        dialect = convert_to_hessisch(original)
         return ConversationResult(text=dialect)

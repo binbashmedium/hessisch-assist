@@ -5,6 +5,5 @@
   "integration_type": "helper",
   "requirements": [],
   "documentation": "https://github.com/binbashmedium/hessisch-assist",
-  "codeowners": ["@binbashmedium"],
-  "iot_class": "local_push"
+  "codeowners": ["@binbashmedium"]
 }

@@ -74,8 +74,8 @@ def _preserve_case(original: str, replacement: str) -> str:
 def _apply_maps(text: str, intensity: int) -> str:
     """Replace words based on dialect maps with optional intensity boost."""
 
-    all_keys = set(_WORD_MAP.keys()) | set(_FOOD_MAP.keys())
-    pattern = re.compile(r"\\b(" + "|".join(map(re.escape, all_keys)) + r")\\b", re.IGNORECASE)
+    all_keys = sorted(set(_WORD_MAP.keys()) | set(_FOOD_MAP.keys()))
+    pattern = re.compile(r"\b(" + "|".join(map(re.escape, all_keys)) + r")\b", re.IGNORECASE)
 
     def replace(match: re.Match[str]) -> str:
         word = match.group(0)
