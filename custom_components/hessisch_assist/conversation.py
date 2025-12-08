@@ -19,10 +19,16 @@ class HessischConversationProvider(AbstractConversationProvider):
         self.id = "hessisch_assist"
         self.name = "Hessisch Assist"
 
+    @property
+    def supported_languages(self) -> list[str]:
+        """Supported languages."""
+        return ["de"]
+
     async def async_process(
-        self, text: str, context: ConversationInput | None
+        self, text: str, context: ConversationInput | None = None
     ) -> ConversationResult:
         """Process a request via default conversation service and return Hessisch reply."""
+
         result = await self.hass.services.async_call(
             "conversation",
             "process",
@@ -30,6 +36,8 @@ class HessischConversationProvider(AbstractConversationProvider):
             blocking=True,
             return_response=True,
         )
-        original = result.get("response", "") if isinstance(result, dict) else ""
-        dialect = convert_to_hessisch(original)
-        return ConversationResult(text=dialect)
+
+        # Extract proper response text for HA 2024.10+
+        try:
+            orig
+            
