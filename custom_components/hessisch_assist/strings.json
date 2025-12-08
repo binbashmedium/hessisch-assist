@@ -1,0 +1,11 @@
+{
+  "title": "Hessisch Assist",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Hessisch Assist",
+        "description": "Antworten werden in hessischen Dialekt umgewandelt."
+      }
+    }
+  }
+}
