@@ -1,11 +1,38 @@
+"""Config flow for Hessisch Assist conversation agent."""
+from __future__ import annotations
+
+from typing import Any
+
+import voluptuous as vol
+
 from homeassistant import config_entries
 
-DOMAIN = "conversation_hessisch"
+from . import DOMAIN
 
 
-class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
+class HessischAssistConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
+    """Handle a config flow for Hessisch Assist."""
+
     VERSION = 1
 
-    async def async_step_user(self, info=None):
-        return self.async_create_entry(title="Hessisch Assist Agent", data={})
-        
+    async def async_step_user(
+        self, user_input: dict[str, Any] | None = None
+    ) -> config_entries.FlowResult:
+        """Handle the initial step."""
+        # Nur eine Instanz zulassen – reicht für diesen Anwendungsfall
+        if self._async_current_entries():
+            return self.async_abort(reason="single_instance_allowed")
+
+        if user_input is not None:
+            return self.async_create_entry(
+                title=user_input.get("name") or "Hessisch Assist",
+                data={},
+            )
+
+        data_schema = vol.Schema(
+            {
+                vol.Optional("name", default="Hessisch Assist"): str,
+            }
+        )
+
+        return self.async_show_form(step_id="user", data_schema=data_schema)
