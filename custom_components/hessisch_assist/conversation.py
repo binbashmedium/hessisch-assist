@@ -39,5 +39,13 @@ class HessischConversationProvider(AbstractConversationProvider):
 
         # Extract proper response text for HA 2024.10+
         try:
-            orig
-            
+            original = (
+                result["response"]["speech"]["plain"]["speech"]
+            )
+        except Exception:
+            original = ""
+
+        dialect = convert_to_hessisch(original)
+
+        return ConversationResult(text=dialect)
+        
