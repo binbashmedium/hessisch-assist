@@ -1,7 +1,7 @@
 """Conversation agent that converts answers to Hessisch dialect."""
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Literal
 
 from homeassistant.components.conversation import (
     HOME_ASSISTANT_AGENT,
@@ -13,6 +13,7 @@ from homeassistant.components.conversation.models import (
     ConversationResult,
 )
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import MATCH_ALL
 from homeassistant.core import HomeAssistant
 
 from .dialect import convert_to_hessisch
@@ -25,20 +26,26 @@ class HessischConversationAgent(AbstractConversationAgent):
         """Initialize the agent."""
         self.hass = hass
         self._entry = entry
-        # ID und Name, wie HA sie im UI anzeigt
-        self.id = entry.entry_id
-        self.name = entry.title or "Hessisch Assist"
-        # Wir akzeptieren alle Sprachen; Hessisch macht bei Deutsch am meisten Sinn
-        # MATCH_ALL wäre sauberer, ist aber hier nicht zwingend notwendig.
-        self.supported_languages = {"*"}
 
-    async def async_process(
-        self,
-        user_input: ConversationInput,
-    ) -> ConversationResult:
+    @property
+    def id(self) -> str:
+        """Return the unique id of the agent."""
+        return self._entry.entry_id
+
+    @property
+    def name(self) -> str:
+        """Return the human readable name of the agent."""
+        return self._entry.title or "Hessisch Assist"
+
+    @property
+    def supported_languages(self) -> set[str] | Literal["*"]:
+        """Return languages supported by this agent."""
+        # Wir hängen uns nur hinter den Standard-Agent – alle Sprachen erlaubt.
+        return MATCH_ALL
+
+    async def async_process(self, user_input: ConversationInput) -> ConversationResult:
         """Handle a conversation turn via the built-in agent and translate the reply."""
-
-        # 1. Standard-Home-Assistant-Agent aufrufen, NICHT uns selbst
+        # 1. Erst den Home-Assistant-Standardagenten ausführen
         base_result: ConversationResult = await async_converse(
             hass=self.hass,
             text=user_input.text,
@@ -48,22 +55,22 @@ class HessischConversationAgent(AbstractConversationAgent):
             agent_id=HOME_ASSISTANT_AGENT,
         )
 
-        # 2. Wenn keine Antwort da ist, einfach zurückgeben
+        # Wenn keine Antwort vorhanden ist, nichts anfassen
         if base_result.response is None:
             return base_result
 
         response = base_result.response
 
-        # 3. Plain-Speech-Text ins Hessische umschreiben
+        # 2. Plain-Text der Antwort ins Hessische umschreiben
         try:
-            # Struktur entspricht dem, was das Conversation-API per /api/conversation/process liefert:
+            # Struktur entspricht dem /api/conversation/process-Result:
             # response.speech["plain"]["speech"] -> Text
-            plain: dict[str, Any] = response.speech.get("plain", {})
+            plain: dict[str, Any] = response.speech.get("plain", {})  # type: ignore[assignment]
             original_text: str = plain.get("speech") or ""
             if original_text:
                 plain["speech"] = convert_to_hessisch(original_text)
         except Exception:
-            # Wenn sich intern mal was ändert, lieber gar nicht ändern als crashen
+            # Sicherheit: lieber Originalantwort lassen als Assist crashen
             return base_result
 
         return base_result
