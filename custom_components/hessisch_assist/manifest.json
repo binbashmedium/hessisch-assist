@@ -1,0 +1,9 @@
+{
+  "domain": "hessisch_assist",
+  "name": "Hessisch Assist Conversation Provider",
+  "version": "1.0.0",
+  "integration_type": "helper",
+  "requirements": [],
+  "documentation": "https://github.com/binbashmedium/hessisch-assist",
+  "codeowners": ["@binbashmedium"]
+}
