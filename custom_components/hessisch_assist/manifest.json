@@ -1,9 +1,9 @@
 {
-  "domain": "hessisch_assist",
-  "name": "Hessisch Assist Conversation Agent",
+  "domain": "conversation_hessisch",
+  "name": "Conversation Agent – Hessisch Assist",
   "version": "1.0.0",
   "config_flow": true,
-  "integration_type": "entity",
+  "integration_type": "system",
   "codeowners": ["@binbashmedium"],
   "documentation": "https://github.com/binbashmedium/hessisch-assist",
   "requirements": []
