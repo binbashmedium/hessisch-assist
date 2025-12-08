@@ -1,5 +1,5 @@
 {
-  "domain": "conversation_hessisch",
+  "domain": "hessisch-assist",
   "name": "Conversation Agent – Hessisch Assist",
   "version": "1.0.0",
   "config_flow": true,
