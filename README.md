@@ -1,6 +1,6 @@
 # Hessisch Assist
 
-Hessisch Assist ist ein Home Assistant Custom Component, das einen eigenen Conversation Provider bereitstellt und Antworten in hessischen Dialekt übersetzt. Die Integration ist über HACS installierbar und kann direkt in einer Assist-Pipeline ausgewählt werden.
+Hessisch Assist ist ein Home Assistant Custom Component, das einen eigenen Conversation Provider bereitstellt und Antworten in hessischen Dialekt übersetzt. Die Integration ist über HACS installierbar und erscheint direkt als auswählbarer Provider in Assist-Pipelines.
 
 ## Installation über HACS
 1. Öffne **HACS → Integrations** in Home Assistant.
