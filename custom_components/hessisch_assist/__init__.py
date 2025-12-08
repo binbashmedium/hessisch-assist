@@ -1,41 +1,31 @@
-"""Hessisch Assist integration."""
+"""Hessisch Assist Agent integration."""
 from __future__ import annotations
 
-from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant
 
-from .conversation import HessischConversationProvider
+from homeassistant.components.conversation import async_set_agent, async_unset_agent
+
+from .conversation import HessischAgent
 
 DOMAIN = "hessisch_assist"
 
 
-async def async_setup(hass: HomeAssistant, config: dict):
-    """Legacy setup – does nothing."""
-    return True
-
-
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
-    """Set up Hessisch Assist using config entry."""
-    provider = HessischConversationProvider(hass)
+    """Set up Hessisch Assist agent."""
+    agent = HessischAgent(hass)
 
-    if DOMAIN not in hass.data:
-        hass.data[DOMAIN] = {}
+    # Register our agent
+    async_set_agent(hass, entry, agent)
 
-    hass.data[DOMAIN]["provider"] = provider
-
-    hass.components.conversation.async_register_provider(provider)
-
+    hass.data.setdefault(DOMAIN, {})["agent"] = agent
     return True
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
-    """Unload Hessisch Assist."""
-    provider = hass.data.get(DOMAIN, {}).get("provider")
-
-    if provider:
-        hass.components.conversation.async_unregister_provider(provider)
+    """Unload Hessisch Assist agent."""
+    async_unset_agent(hass, entry)
 
     hass.data.pop(DOMAIN, None)
-
     return True
     
