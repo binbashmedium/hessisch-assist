@@ -1,0 +1,11 @@
+{
+  "title": "Frankfurt Assist",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Frankfurt Assist",
+        "description": "Antworten werden in den Frankfurter Dialekt übertragen."
+      }
+    }
+  }
+}
